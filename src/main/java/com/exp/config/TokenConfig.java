@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -30,11 +31,13 @@ public class TokenConfig extends WebSecurityConfigurerAdapter {
 		
 		http
 			.csrf().disable()
-			.authorizeRequests().antMatchers("/oauth/token**").authenticated()
+			.requestMatchers().antMatchers("/oauth/token")
 			.and()
-				.authorizeRequests().antMatchers("/**").permitAll()
+				.authorizeRequests().antMatchers("/oauth/token").authenticated()
+//			.and()
+//				.authorizeRequests().antMatchers("/**").permitAll()
 			.and()
-				.addFilterBefore(getCustomAuthenticationFilter("/oauth/token**"), BasicAuthenticationFilter.class);
+				.addFilterBefore(getCustomAuthenticationFilter("/oauth/token"), UsernamePasswordAuthenticationFilter.class);
 				
 		
 //		http

@@ -15,8 +15,9 @@ public class AuthorizeConfig extends WebSecurityConfigurerAdapter {
 			.csrf().disable()
 			.formLogin()
 			.and()
-				.authorizeRequests().antMatchers("/login", "/oauth/authorize", "/oauth/confirm_access")
-				.authenticated()
+				.requestMatchers().antMatchers("/login", "/oauth/authorize", "/oauth/confirm_access")
+			.and()
+				.authorizeRequests().antMatchers("/login", "/oauth/authorize", "/oauth/confirm_access").authenticated()
 			.and()
 				.authorizeRequests().antMatchers("/**").permitAll();
 				
