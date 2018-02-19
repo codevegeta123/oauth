@@ -30,6 +30,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import javax.sql.DataSource;
 
@@ -51,39 +52,68 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    @Autowired
 //    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Autowired
     private ClientDetailsService clientDetailsService;
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private CustomUserDetailsService userDetailsService;
 
     @Autowired
     private FormAuthenticationProvider formAuthenticationProvider;
 
     protected CustomFormAuthenticationFilter getCustomAuthenticationFilter(String pattern)throws Exception{
         CustomFormAuthenticationFilter customAuthenticationFilter =
-                new CustomFormAuthenticationFilter(new AntPathRequestMatcher(pattern), customUserDetailsService);
+                new CustomFormAuthenticationFilter(new AntPathRequestMatcher(pattern), userDetailsService);
         customAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
         return customAuthenticationFilter;
     }
 
     @Override
-    @Order(Ordered.HIGHEST_PRECEDENCE)
+//    @Order(-5)
+    @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     protected void configure(HttpSecurity http) throws Exception {
+    	
+//    	http
+//    		.csrf().disable()
+//    		.formLogin().loginPage("/login").permitAll()
+//    		.and()
+//    			.requestMatchers()
+//    			.antMatchers("/login", "/oauth/authorize", "/oauth/confirm_access")
+//			.and()
+//				.authorizeRequests().anyRequest().authenticated()
+//			.and()
+//				.userDetailsService(userDetailsService);
+    	
+//    	http
+//    		.csrf().disable()
+//			.authorizeRequests()
+//			.antMatchers("/oauth/token**")
+//			.authenticated()
+//			.and()
+//				.addFilterBefore(getCustomAuthenticationFilter("/oauth/token"), BasicAuthenticationFilter.class)
+//				.authenticationProvider(formAuthenticationProvider);
+//    	
+//    	http
+//    		.csrf().disable()
+//    		.authorizeRequests()
+//    		.antMatchers("/login").permitAll()
+//    		.anyRequest().authenticated()
+//    		.and().formLogin().permitAll();   	
+    	
 
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/oauth/token/revokeById/**").permitAll()
-                .antMatchers("/tokens/**").permitAll()
-                .antMatchers("/oauth/token**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin().permitAll();
+//        http
+//                .csrf().disable()
+//                .authorizeRequests()
+//                .antMatchers("/login").permitAll()
+//                .antMatchers("/oauth/token/revokeById/**").permitAll()
+//                .antMatchers("/tokens/**").permitAll()
+//                .antMatchers("/oauth/token**").permitAll()
+//                .anyRequest().authenticated()
+//                .and()
+//                .formLogin().permitAll();
 //                .and()
 //                .addFilterBefore(getCustomOauthAuthenticationFilter("/oauth/token**"), BasicAuthenticationFilter.class);
 
@@ -134,17 +164,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(formAuthenticationProvider)
-            .userDetailsService(customUserDetailsService)
+        auth
+        	.parentAuthenticationManager(authenticationManager)
+//        	.authenticationProvider(formAuthenticationProvider)
+            .userDetailsService(userDetailsService)
             .and()
             .jdbcAuthentication().dataSource(dataSource);
     }
 
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+//    @Override
+//    @Bean
+//    public AuthenticationManager authenticationManagerBean() throws Exception {
+//        return super.authenticationManagerBean();
+//    }
 
 //    @Bean
 //    @Autowired

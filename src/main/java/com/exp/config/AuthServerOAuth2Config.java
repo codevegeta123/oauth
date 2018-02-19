@@ -1,5 +1,6 @@
 package com.exp.config;
 
+import com.exp.service.CustomClientDetailsService;
 import com.exp.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -7,16 +8,28 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.TokenGranter;
+import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
+import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
+
+import java.util.Arrays;
 
 import javax.sql.DataSource;
 
@@ -26,9 +39,6 @@ import javax.sql.DataSource;
 @EnableAuthorizationServer
 @Configuration
 public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter {
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     @Qualifier("primaryOauthDataSource")
@@ -42,6 +52,12 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+    
+    @Autowired
+    private CustomClientDetailsService customClientDetailsService;    
+    
+//    @Autowired
+//    private AuthenticationManager authenticationManager;
 
     @Bean
     public TokenStore tokenStore() {
@@ -52,6 +68,11 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
     public AuthorizationCodeServices authorizationCodeServices() {
         return new JdbcAuthorizationCodeServices(dataSource);
     }
+    
+    @Bean
+    public OAuth2RequestFactory requestFactory() {
+    	return new DefaultOAuth2RequestFactory(customClientDetailsService);
+    }
 
     @Bean
     @Primary
@@ -59,14 +80,35 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setSupportRefreshToken(true);
-        //Add ClientDetailsService code
+        defaultTokenServices.setClientDetailsService(customClientDetailsService);
+        defaultTokenServices.setAuthenticationManager(authenticationManager());
         return defaultTokenServices;
+    }   
+    
+    @Bean
+    public  AuthorizationCodeTokenGranter authorizationTokenGranter() throws Exception {
+        return new AuthorizationCodeTokenGranter(tokenServices(), authorizationCodeServices(), customClientDetailsService, requestFactory());
     }
+    
+    @Bean(name = "clientAuthenticationProvider")
+	public AuthenticationProvider clientAuthenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(new ClientDetailsUserDetailsService(customClientDetailsService));
+		return provider;
+	}
+    
+    @Bean
+	public AuthenticationProvider userAuthenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(customUserDetailsService);
+		return provider;
+	}
+    
+    @Bean
+	public AuthenticationManager authenticationManager() {
+		return new ProviderManager(Arrays.asList(clientAuthenticationProvider(), userAuthenticationProvider()));
+	}
 
-    @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-        clients.jdbc(dataSource);
-    }
 
     /**
      * Allow our tokens to be delivered from our token access point as well as for tokens
@@ -78,7 +120,13 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 //        security.realm()
-        security.checkTokenAccess("permitAll()");
+//        security.checkTokenAccess("permitAll()");
+    }    
+
+    @Override
+    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+//        clients.jdbc(dataSource);
+    	clients.withClientDetails(customClientDetailsService).build();
     }
 
     @Override
@@ -86,8 +134,9 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
         endpoints
                 .tokenStore(tokenStore)
                 .authorizationCodeServices(authorizationCodeServices())
+                .tokenGranter(authorizationTokenGranter())
 //                .userApprovalHandler(userApprovalHandler)
-                .authenticationManager(authenticationManager)
+                .authenticationManager(authenticationManager())
                 .userDetailsService(customUserDetailsService);
     }
 }

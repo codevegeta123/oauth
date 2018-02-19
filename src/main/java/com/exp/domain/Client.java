@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -24,12 +26,14 @@ public class Client implements Serializable {
 
     @Column(name = "resource_ids")
     private String resourceIds;
-
+    
+    @Transient
     private boolean secretRequired = true;
 
     @Column(name = "client_secret")
     private String clientSecret;
-
+    
+    @Transient
     private boolean scoped = true;
 
     @Column(name = "scope")

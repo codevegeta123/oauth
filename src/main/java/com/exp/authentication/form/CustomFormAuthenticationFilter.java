@@ -1,6 +1,8 @@
 package com.exp.authentication.form;
 
 import com.exp.service.CustomUserDetailsService;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -66,7 +68,11 @@ public class CustomFormAuthenticationFilter extends AbstractAuthenticationProces
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(CHARACTER_ENCODING_UTF_8);
         JSONObject jsonResponse = new JSONObject();
-        jsonResponse.put("message", "Invalid Credentials");
+        try {
+			jsonResponse.put("message", "Invalid Credentials");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
         response.getWriter().write(jsonResponse.toString());
     }
 }

@@ -2,10 +2,15 @@ package com.exp.config;
 
 import com.exp.config.handler.CustomAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
+import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 
 /**
  * Created by rohith on 18/2/18.
@@ -15,16 +20,30 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     @Autowired
+    private DefaultTokenServices tokenServices;
+	
+	@Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
+    
+    @Override
+    public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
+        resources
+            .tokenServices(tokenServices)
+            .authenticationEntryPoint(new OAuth2AuthenticationEntryPoint())
+            .accessDeniedHandler(customAccessDeniedHandler);
+    }
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http.
-            anonymous().disable()
-            .requestMatchers().antMatchers("/api/**")
-            .and().authorizeRequests()
-            .antMatchers("/api/**").access("hasRole('ADMIN') or hasRole('USER')")
-            .and().exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
+    	
+    	http.authorizeRequests().anyRequest().permitAll();
+    	
+//        http.
+//            anonymous().disable()
+//            .requestMatchers().antMatchers("/api/**")
+//            .and().authorizeRequests()
+//            .antMatchers("/api/**").access("hasRole('ADMIN') or hasRole('USER')")
+//            .and().exceptionHandling().accessDeniedHandler(customAccessDeniedHandler);
     }
 
 }

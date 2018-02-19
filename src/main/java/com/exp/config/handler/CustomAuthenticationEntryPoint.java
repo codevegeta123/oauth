@@ -1,5 +1,6 @@
 package com.exp.config.handler;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +23,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setCharacterEncoding("UTF-8");
     JSONObject jsonResponse = new JSONObject();
-    jsonResponse.put("message", "Invalid JWT");
+    try {
+		jsonResponse.put("message", "Invalid JWT");
+	} catch (JSONException e) {
+		e.printStackTrace();
+	}
     response.getWriter().write(jsonResponse.toString());
   }
 
