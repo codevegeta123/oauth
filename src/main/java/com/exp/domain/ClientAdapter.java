@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -63,7 +64,18 @@ public class ClientAdapter implements ClientDetails {
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
-        return null;
+    	
+    	Collection<GrantedAuthority> authorities = Collections.EMPTY_LIST;
+    	authorities.add(new GrantedAuthority() {
+			
+			@Override
+			public String getAuthority() {
+				// TODO Auto-generated method stub
+				return "ROLE_ADMIN";
+			}
+		});
+    	
+        return authorities;
     }
 
     @Override

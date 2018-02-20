@@ -48,9 +48,15 @@ public class CustomAuthorizationCodeAuthenticationFilter extends AbstractAuthent
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException, ServletException {
+    	
+//    	String username = request.getParameter("username");
+//        String password = request.getParameter("password");
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken("peddirohith", "next123");
+        
+    	
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
+//        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(username, password);
         return this.getAuthenticationManager().authenticate(token);
     }
 
