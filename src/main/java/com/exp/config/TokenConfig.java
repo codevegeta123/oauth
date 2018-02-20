@@ -6,10 +6,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import com.exp.authentication.form.CustomFormAuthenticationFilter;
+import com.exp.authentication.form.CustomAuthorizationCodeAuthenticationFilter;
 import com.exp.service.CustomUserDetailsService;
 
 @Order(Integer.MIN_VALUE + 20)
@@ -19,9 +18,9 @@ public class TokenConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CustomUserDetailsService userDetailsService;
 	
-	protected CustomFormAuthenticationFilter getCustomAuthenticationFilter(String pattern)throws Exception{
-        CustomFormAuthenticationFilter customAuthenticationFilter =
-                new CustomFormAuthenticationFilter(new AntPathRequestMatcher(pattern), userDetailsService);
+	protected CustomAuthorizationCodeAuthenticationFilter getCustomAuthenticationFilter(String pattern)throws Exception{
+        CustomAuthorizationCodeAuthenticationFilter customAuthenticationFilter =
+                new CustomAuthorizationCodeAuthenticationFilter(new AntPathRequestMatcher(pattern), userDetailsService);
         customAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
         return customAuthenticationFilter;
     }

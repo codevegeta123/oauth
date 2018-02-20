@@ -1,9 +1,7 @@
 package com.exp.config;
 
-import com.exp.authentication.form.CustomFormAuthenticationFilter;
+import com.exp.authentication.form.CustomAuthorizationCodeAuthenticationFilter;
 import com.exp.authentication.form.FormAuthenticationProvider;
-import com.exp.config.handler.CustomAccessDeniedHandler;
-import com.exp.config.handler.CustomAuthenticationEntryPoint;
 import com.exp.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,20 +15,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.approval.ApprovalStore;
 import org.springframework.security.oauth2.provider.approval.TokenApprovalStore;
-import org.springframework.security.oauth2.provider.approval.TokenStoreUserApprovalHandler;
-import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import javax.sql.DataSource;
 
@@ -64,9 +52,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private FormAuthenticationProvider formAuthenticationProvider;
 
-    protected CustomFormAuthenticationFilter getCustomAuthenticationFilter(String pattern)throws Exception{
-        CustomFormAuthenticationFilter customAuthenticationFilter =
-                new CustomFormAuthenticationFilter(new AntPathRequestMatcher(pattern), userDetailsService);
+    protected CustomAuthorizationCodeAuthenticationFilter getCustomAuthenticationFilter(String pattern)throws Exception{
+        CustomAuthorizationCodeAuthenticationFilter customAuthenticationFilter =
+                new CustomAuthorizationCodeAuthenticationFilter(new AntPathRequestMatcher(pattern), userDetailsService);
         customAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
         return customAuthenticationFilter;
     }

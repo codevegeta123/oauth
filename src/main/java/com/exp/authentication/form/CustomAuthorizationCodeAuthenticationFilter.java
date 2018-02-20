@@ -1,5 +1,6 @@
 package com.exp.authentication.form;
 
+import com.exp.repository.AuthCodeRepository;
 import com.exp.service.CustomUserDetailsService;
 
 import org.json.JSONException;
@@ -29,14 +30,17 @@ import java.util.stream.Collectors;
 /**
  * Created by rohith on 17/2/18.
  */
-public class CustomFormAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+public class CustomAuthorizationCodeAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     private static final String CHARACTER_ENCODING_UTF_8 = "UTF-8";
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    public CustomFormAuthenticationFilter(RequestMatcher requiresAuthenticationRequestMatcher, CustomUserDetailsService userDetailsService) {
+    @Autowired
+    private AuthCodeRepository authCodeRepository;
+
+    public CustomAuthorizationCodeAuthenticationFilter(RequestMatcher requiresAuthenticationRequestMatcher, CustomUserDetailsService userDetailsService) {
         super(requiresAuthenticationRequestMatcher);
         this.userDetailsService = userDetailsService;
     }
