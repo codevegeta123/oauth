@@ -10,7 +10,7 @@
 		</layout>
 	</appender>
 
-	<logger name="com.exp" level="debug">
+	<logger name="com.exp" level="info">
 		<appender-ref ref="STDOUT" />
 	</logger>
 
@@ -18,7 +18,7 @@
 		<level value="DEBUG" />
 	</logger>
 
-	<root level="debug">
+	<root level="info">
 		<appender-ref ref="STDOUT" />
 	</root>
 
