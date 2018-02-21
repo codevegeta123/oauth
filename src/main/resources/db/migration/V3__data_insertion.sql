@@ -21,16 +21,16 @@ VALUES
    'password,authorization_code,refresh_token', null, 'ROLE_USER,ROLE_ADMIN', 36000, 36000, null, true);
 
 INSERT INTO user
-(enabled, name, password, username)
-VALUES (0, 'rohith', 'next123', 'peddirohith');
+(phone, email, enabled, name, password, username)
+VALUES (987238381, 'rp1@gmail.com', 0, 'rohith', 'next123', 'rohith');
 
 INSERT INTO user
-(enabled, name, password, username)
-VALUES (0, 'admin', 'next123', 'admin');
+(phone, email, enabled, name, password, username)
+VALUES (9872383882, 'rp2@gmail.com', 0, 'admin', 'next123', 'admin');
 
 INSERT INTO user
-(enabled, name, password, username)
-VALUES (0, 'user', 'password', 'user');
+(phone, email, enabled, name, password, username)
+VALUES (9872383883, 'rp3@gmail.com', 0, 'user', 'password', 'user');
 
 INSERT INTO role (role) values ('ADMIN');
 INSERT INTO role (role) values ('USER');

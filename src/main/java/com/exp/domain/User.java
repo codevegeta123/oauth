@@ -43,7 +43,13 @@ public class User implements Serializable {
 
     @Column(name = "enabled")
     private boolean enabled;
-
+    
+    @Column(name = "email")
+    private String email;
+   
+	@Column(name = "phone")
+    private Long phoneNumber;
+    
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
@@ -121,6 +127,23 @@ public class User implements Serializable {
         this.roles.remove(role);
         role.getUsers().remove(this);
     }
+    
+    public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public Long getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(Long phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 
 }
 

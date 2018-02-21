@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS user (
   name VARCHAR(255),
   username VARCHAR(255),
   password VARCHAR(255),
-  enabled TINYINT(1) DEFAULT 0
+  enabled TINYINT(1) DEFAULT 0,
+  email VARCHAR(255),
+  phone BIGINT(20)
 );
 
 CREATE TABLE IF NOT EXISTS role (

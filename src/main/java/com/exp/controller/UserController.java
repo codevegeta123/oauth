@@ -1,25 +1,37 @@
 package com.exp.controller;
 
-import org.springframework.web.bind.annotation.RestController;
-
 /**
  * Created by rohith on 17/2/18.
  */
 
+import org.springframework.web.bind.annotation.RestController;
+import com.exp.domain.User;
+import com.exp.repository.UserRepository;
+import com.exp.service.CustomUserDetailsService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @RestController
 @RequestMapping("/secure")
 public class UserController {
+	
+	@Autowired
+	private UserRepository userRepository;
+	
 
     @GetMapping("/user")
     public @ResponseBody Map<String, String> getUser() {
@@ -36,6 +48,21 @@ public class UserController {
     public @ResponseBody Map<String, String> getParticipant() {
         return getSuccessResponse();
     }
+    
+    @SuppressWarnings("unchecked")
+	@PostMapping("/user/profile")
+    public ResponseEntity<Map> fetchUserDetails() {
+    	
+    	User user = getUserDetails();
+    	Map resultMap = new HashMap<>();
+    	
+    	resultMap.put("user_id", user.getId());
+    	resultMap.put("username", user.getUsername());
+    	resultMap.put("email", user.getEmail());
+    	resultMap.put("phone", user.getPhoneNumber());
+    	
+    	return new ResponseEntity<Map>(resultMap, HttpStatus.OK);
+    }
 
 
     private Set<String> getRoles(Authentication authentication) {
@@ -44,6 +71,15 @@ public class UserController {
 
     private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
+    }
+    
+    private User getUserDetails(){
+    	
+    	Authentication currentAuthentication =  getAuthentication();
+    	String username = currentAuthentication.getName();
+    	User user = userRepository.findByUsername(username);
+    	
+    	return user;
     }
 
     private Map<String, String> getSuccessResponse() {
