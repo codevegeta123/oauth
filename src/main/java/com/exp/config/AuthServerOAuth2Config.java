@@ -44,8 +44,8 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
     @Qualifier("primaryOauthDataSource")
     private DataSource dataSource;
 
-    @Autowired
-    private TokenStore tokenStore;
+//    @Autowired
+//    private TokenStore tokenStore;
 
 //    @Autowired
 //    private UserApprovalHandler userApprovalHandler;
@@ -74,8 +74,8 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
     	return new DefaultOAuth2RequestFactory(customClientDetailsService);
     }
 
-    @Bean
     @Primary
+    @Bean
     public DefaultTokenServices tokenServices() {
         DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
@@ -97,14 +97,14 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
 		return provider;
 	}
     
-    @Bean
+    @Bean(name = "userAuthenticationProvider")
 	public AuthenticationProvider userAuthenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
 		provider.setUserDetailsService(customUserDetailsService);
 		return provider;
 	}
     
-    @Bean
+    @Bean("clientAndUserAuthenticationManager")
 	public AuthenticationManager authenticationManager() {
 		return new ProviderManager(Arrays.asList(clientAuthenticationProvider(), userAuthenticationProvider()));
 	}
@@ -132,7 +132,7 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
-                .tokenStore(tokenStore)
+                .tokenStore(tokenStore())
                 .authorizationCodeServices(authorizationCodeServices())
                 .tokenGranter(authorizationTokenGranter())
 //                .userApprovalHandler(userApprovalHandler)

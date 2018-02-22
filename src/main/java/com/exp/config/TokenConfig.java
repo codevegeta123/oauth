@@ -1,6 +1,7 @@
 package com.exp.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -18,10 +19,11 @@ import com.exp.service.CustomUserDetailsService;
 @Configuration
 public class TokenConfig extends WebSecurityConfigurerAdapter {
 	
-	@Autowired
-	private CustomUserDetailsService userDetailsService;
+//	@Autowired
+//	private CustomUserDetailsService userDetailsService;
 	
 	@Autowired
+	@Qualifier("clientAndUserAuthenticationManager")
 	private AuthenticationManager authenticationManager;
 	
 	@Bean

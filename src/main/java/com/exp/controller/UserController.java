@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @RestController
-@RequestMapping("/secure")
+//@RequestMapping("/secure")
 public class UserController {
 	
 	@Autowired
@@ -50,7 +50,7 @@ public class UserController {
     }
     
     @SuppressWarnings("unchecked")
-	@PostMapping("/user/profile")
+	@GetMapping("/user/profile")
     public ResponseEntity<Map> fetchUserDetails() {
     	
     	User user = getUserDetails();
@@ -60,6 +60,9 @@ public class UserController {
     	resultMap.put("username", user.getUsername());
     	resultMap.put("email", user.getEmail());
     	resultMap.put("phone", user.getPhoneNumber());
+    	resultMap.put("fullname", user.getName());
+    	resultMap.put("first_name", user.getName());
+    	resultMap.put("last_name", user.getName());
     	
     	return new ResponseEntity<Map>(resultMap, HttpStatus.OK);
     }

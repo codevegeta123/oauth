@@ -41,29 +41,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
 
     @Autowired
+    @Qualifier("clientAndUserAuthenticationManager")
     private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private ClientDetailsService clientDetailsService;
+//    @Autowired
+//    private ClientDetailsService clientDetailsService;
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
-    @Autowired
-    private FormAuthenticationProvider formAuthenticationProvider;
+//    @Autowired
+//    private FormAuthenticationProvider formAuthenticationProvider;
 
-    protected CustomAuthorizationCodeAuthenticationFilter getCustomAuthenticationFilter(String pattern)throws Exception{
-        CustomAuthorizationCodeAuthenticationFilter customAuthenticationFilter =
-                new CustomAuthorizationCodeAuthenticationFilter(new AntPathRequestMatcher(pattern), userDetailsService);
-        customAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
-        return customAuthenticationFilter;
-    }
+//    protected CustomAuthorizationCodeAuthenticationFilter getCustomAuthenticationFilter(String pattern)throws Exception{
+//        CustomAuthorizationCodeAuthenticationFilter customAuthenticationFilter =
+//                new CustomAuthorizationCodeAuthenticationFilter(new AntPathRequestMatcher(pattern), userDetailsService);
+//        customAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
+//        return customAuthenticationFilter;
+//    }
 
-    @Override
+//    @Override
 //    @Order(-5)
-    @Order(Ordered.HIGHEST_PRECEDENCE + 1)
-    protected void configure(HttpSecurity http) throws Exception {
-    	
+//    @Order(Ordered.HIGHEST_PRECEDENCE + 1)
+//    protected void configure(HttpSecurity http) throws Exception {
+//    	
 //    	http
 //    		.csrf().disable()
 //    		.formLogin().loginPage("/login").permitAll()
@@ -74,7 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //				.authorizeRequests().anyRequest().authenticated()
 //			.and()
 //				.userDetailsService(userDetailsService);
-    	
+//    	
 //    	http
 //    		.csrf().disable()
 //			.authorizeRequests()
@@ -90,8 +91,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //    		.antMatchers("/login").permitAll()
 //    		.anyRequest().authenticated()
 //    		.and().formLogin().permitAll();   	
-    	
-
+//    	
+//
 //        http
 //                .csrf().disable()
 //                .authorizeRequests()
@@ -104,8 +105,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .formLogin().permitAll();
 //                .and()
 //                .addFilterBefore(getCustomOauthAuthenticationFilter("/oauth/token**"), BasicAuthenticationFilter.class);
-
-        // @formatter:off
+//
+//        // @formatter:off
 //        http
 //            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 //            .and()
@@ -130,8 +131,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .addFilterBefore(getCustomAuthenticationFilter("/auth/login"), UsernamePasswordAuthenticationFilter.class)
 //            .anonymous()
 //                .disable();
-        // @formatter:on
-    }
+//        // @formatter:on
+//    }
 
 //    @Override
 //    @Order(Ordered.HIGHEST_PRECEDENCE)
