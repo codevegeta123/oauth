@@ -32,44 +32,37 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Autowired
     private CustomAccessDeniedHandler customAccessDeniedHandler;
 	
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
+//	@Autowired
+//	private AuthenticationManager authenticationManager;
+//	
 	
 //	@Autowired
 //	private AccessTokenAuthenticationFilter accessTokenAuthenticationFilter;
 	
-	@Bean
-	@Value("/user/profile")
-	public AccessTokenAuthenticationFilter accessTokenAuthenticationFilter(String path) {
-		AccessTokenAuthenticationFilter accessTokenAuthenticationFilter = new AccessTokenAuthenticationFilter(path);
-		accessTokenAuthenticationFilter.setAuthenticationManager(authenticationManager);
-		return accessTokenAuthenticationFilter;
-	}
     
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources
             .tokenServices(tokenServices)
-            .authenticationEntryPoint(new OAuth2AuthenticationEntryPoint())
+//            .authenticationEntryPoint(new OAuth2AuthenticationEntryPoint())
             .accessDeniedHandler(customAccessDeniedHandler);
     }
 
-    @Override
-    @Order(Integer.MIN_VALUE + 30)
-    public void configure(HttpSecurity http) throws Exception {
-    	
-//    	http.authorizeRequests().anyRequest().permitAll();
-    	
-        http
-        	.anonymous().disable()
-            .requestMatchers().antMatchers("/user/**")
-            .and()
-            	.authorizeRequests().antMatchers("/user/**").authenticated()
-            .and()            
-				.authorizeRequests().antMatchers("/**").permitAll()
-			.and()
-				.addFilterAfter(accessTokenAuthenticationFilter("/user/profile"), LogoutFilter.class);
-    }
+//    @Override
+////    @Order(Integer.MIN_VALUE + 30)
+//    public void configure(HttpSecurity http) throws Exception {
+//    	
+////    	http.authorizeRequests().anyRequest().permitAll();
+//    	
+////        http
+////        	.anonymous().disable()
+////            .requestMatchers().antMatchers("/user/**")
+////            .and()
+////            	.authorizeRequests().antMatchers("/user/**").authenticated()
+////            .and()            
+////				.authorizeRequests().antMatchers("/**").permitAll();
+////			.and()
+////				.addFilterAfter(accessTokenAuthenticationFilter("/user/profile"), LogoutFilter.class);
+//    }
 
 }
