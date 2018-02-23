@@ -16,15 +16,12 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
-import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory;
-import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
@@ -44,21 +41,12 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
     @Qualifier("primaryOauthDataSource")
     private DataSource dataSource;
 
-//    @Autowired
-//    private TokenStore tokenStore;
-
-//    @Autowired
-//    private UserApprovalHandler userApprovalHandler;
-
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
     
     @Autowired
     private CustomClientDetailsService customClientDetailsService;    
     
-//    @Autowired
-//    private AuthenticationManager authenticationManager;
-
     @Bean
     public TokenStore tokenStore() {
         return new JdbcTokenStore(dataSource);
@@ -109,14 +97,6 @@ public class AuthServerOAuth2Config extends AuthorizationServerConfigurerAdapter
 		return new ProviderManager(Arrays.asList(clientAuthenticationProvider(), userAuthenticationProvider()));
 	}
 
-
-    /**
-     * Allow our tokens to be delivered from our token access point as well as for tokens
-     * to be validated from this point
-     *
-     * @param security
-     * @throws Exception
-     */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 //        security.realm()
